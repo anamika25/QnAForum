@@ -1,6 +1,7 @@
 <%@taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@include file="header.jsp"%>
 <html>
 <body>
 	<h1>Title : ${title}</h1>
@@ -25,8 +26,6 @@
 					href="javascript:formSubmit()"> Logout</a>
 			</h2>
 		</c:if>
-
-
 	</sec:authorize>
 </body>
 </html>

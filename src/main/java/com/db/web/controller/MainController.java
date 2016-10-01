@@ -1,5 +1,7 @@
 package com.db.web.controller;
 
+import java.security.Principal;
+
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +16,13 @@ import org.springframework.web.servlet.ModelAndView;
 public class MainController {
 
 	@RequestMapping(value = { "/", "/welcome**" }, method = RequestMethod.GET)
-	public ModelAndView defaultPage() {
+	public ModelAndView defaultPage(Principal principal) {
 
 		ModelAndView model = new ModelAndView();
+		if (principal == null) {
+			model.setViewName("redirect:/login");
+			return model;
+		}
 		model.addObject("title", "Spring Security Login Form - Database Authentication");
 		model.addObject("message", "This is default page!");
 		model.setViewName("hello");
@@ -26,7 +32,6 @@ public class MainController {
 
 	@RequestMapping(value = "/admin**", method = RequestMethod.GET)
 	public ModelAndView adminPage() {
-
 		ModelAndView model = new ModelAndView();
 		model.addObject("title", "Spring Security Login Form - Database Authentication");
 		model.addObject("message", "This page is for ROLE_ADMIN only!");
@@ -53,23 +58,23 @@ public class MainController {
 		return model;
 
 	}
-	
-	//for 403 access denied page
+
+	// for 403 access denied page
 	@RequestMapping(value = "/403", method = RequestMethod.GET)
 	public ModelAndView accesssDenied() {
 
 		ModelAndView model = new ModelAndView();
-		
-		//check if user is login
+
+		// check if user is login
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!(auth instanceof AnonymousAuthenticationToken)) {
 			UserDetails userDetail = (UserDetails) auth.getPrincipal();
 			System.out.println(userDetail);
-		
+
 			model.addObject("username", userDetail.getUsername());
-			
+
 		}
-		
+
 		model.setViewName("403");
 		return model;
 
