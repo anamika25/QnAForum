@@ -23,6 +23,16 @@ public class MainController {
 		return model;
 
 	}
+	
+	@RequestMapping(value = { "/Add_Question" }, method = RequestMethod.GET)
+	public ModelAndView QuestionPage() {
+
+		ModelAndView model = new ModelAndView();
+		model.addObject("title", "Spring Security Login Form - Database Authentication");
+		model.addObject("message", "This is default page!");
+		model.setViewName("Question");
+		return model;
+	}
 
 	@RequestMapping(value = "/admin**", method = RequestMethod.GET)
 	public ModelAndView adminPage() {
