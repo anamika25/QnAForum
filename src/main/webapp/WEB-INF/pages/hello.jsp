@@ -2,6 +2,8 @@
 	uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+=======
+<%@include file="header.jsp"%>
 <html>
 
 <head>
@@ -68,8 +70,6 @@ href="./welcome?&page=${i-1}">${i}</a></li>
 					href="javascript:formSubmit()"> Logout</a>
 			</h2>
 		</c:if>
-
-
 	</sec:authorize>
 </body>
 </html>
