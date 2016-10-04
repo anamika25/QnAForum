@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -58,24 +60,25 @@ public class QuestionDao {
 		}
 	}
 
-	public Question findQuestionsPaginated(int pageId) {
-		String sql = "SELECT * FROM Questions LIMIT = ? OFFSET = ?";
+	public List<Question> findQuestionsPaginated(int pageId) {
+		String sql = "SELECT * FROM Questions LIMIT ? OFFSET ?";
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, 20);
 			ps.setInt(2, pageId * 20);
-			Question ques = null;
+			List<Question> questions = new ArrayList<Question>();
 			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				ques = new Question(rs.getInt("question_id"), rs.getString("title"), rs.getString("text"),
+			while (rs.next()) {
+				Question ques = new Question(rs.getInt("question_id"), rs.getString("title"), rs.getString("text"),
 						rs.getInt("user_id"));
 				ques.setUser(userDao.findByUserId(ques.getUserId()));
+				questions.add(ques);
 			}
 			rs.close();
 			ps.close();
-			return ques;
+			return questions;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {

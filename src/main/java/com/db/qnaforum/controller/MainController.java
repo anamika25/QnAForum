@@ -23,14 +23,15 @@ public class MainController {
 
 	@RequestMapping(value = { "/", "/welcome**" }, method = RequestMethod.GET)
 	public ModelAndView defaultPage(Principal principal,
-			@RequestParam(value = "pageNum", required = false) int pageNum) {
+			@RequestParam(value = "pageNum", required = false) Integer pageNum) {
 
 		ModelAndView model = new ModelAndView();
 		if (principal == null) {
 			model.setViewName("redirect:/login");
 			return model;
 		}
-		System.out.println(quesDao.findQuestionsPaginated(pageNum));
+		pageNum = pageNum == null ? 0 : pageNum;
+		quesDao.findQuestionsPaginated(pageNum);
 		model.addObject("title", "Spring Security Login Form - Database Authentication");
 		model.addObject("message", "This is default page!");
 		model.setViewName("hello");
