@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.db.qnaforum.dao.QuestionDao;
+import com.db.qnaforum.entity.Answer;
+import com.db.qnaforum.entity.Question;
 
 @Controller
 public class MainController {
@@ -61,6 +63,21 @@ public class MainController {
 	 * 
 	 * }
 	 */
+
+	@RequestMapping(value = "/quesDetail", method = RequestMethod.GET)
+	public ModelAndView questionDetails(@RequestParam(value = "quesId", required = true) Integer quesId) {
+		ModelAndView model = new ModelAndView();
+		Question quesDetails = quesDao.findByQuestionId(quesId);
+		quesDetails.setText(quesDetails.getText().replaceFirst("\\n", "").replace("\n", "<br/>").replace(" ", "&nbsp;")
+				.replace("\"", "'"));
+		for (Answer answer : quesDetails.getAnswers()) {
+			answer.setText(answer.getText().replaceFirst("\\n", "").replace("\n", "<br/>").replace(" ", "&nbsp;")
+					.replace("\"", "'"));
+		}
+		model.addObject("question", quesDetails);
+		model.setViewName("questionDetails");
+		return model;
+	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView login(@RequestParam(value = "error", required = false) String error,

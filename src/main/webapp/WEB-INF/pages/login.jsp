@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page isELIgnored ="false" %>
+<%@ page isELIgnored="false"%>
 <%@page session="true"%>
 <%@include file="header.jsp"%>
 <html>
@@ -19,7 +19,6 @@
 </head>
 <body onload='document.loginForm.username.focus();'>
 
-	<h1>QnAForum</h1>
 	<div class="container" style="margin-top: 30px">
 		<div class="col-md-4 col-md-offset-4">
 			<div class="panel panel-default">
