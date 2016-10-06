@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.db.qnaforum.entity.User;
+import com.mysql.jdbc.Statement;
 
 @Repository
 public class UserDao {
@@ -64,6 +65,32 @@ public class UserDao {
 			rs.close();
 			ps.close();
 			return user;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	public boolean createUser(String fullname, String username, String password) {
+		String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, username);
+			ps.setString(2, password);
+			int key = ps.executeUpdate();
+			if (key != 0) {
+				return true;
+			}
+			ps.close();
+			return false;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {

@@ -18,6 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.db.qnaforum.dao.CategoryDao;
 import com.db.qnaforum.dao.QuestionDao;
 import com.db.qnaforum.dao.UserDao;
+import com.db.qnaforum.dao.AnswerDao;
+import com.db.qnaforum.entity.Answer;
+import com.db.qnaforum.entity.Question;
 import com.db.qnaforum.entity.User;
 
 @Controller
@@ -30,6 +33,9 @@ public class MainController {
 	@Autowired
 	private UserDao userDao;
 
+	@Autowired
+	private AnswerDao ansDao;
+
 	@RequestMapping(value = { "/", "/welcome**" }, method = RequestMethod.GET)
 	public ModelAndView defaultPage(Principal principal,
 			@RequestParam(value = "pageNum", required = false) Integer pageNum) {
@@ -40,19 +46,21 @@ public class MainController {
 			return model;
 		}
 		pageNum = pageNum == null ? 0 : pageNum;
-		quesDao.findQuestionsPaginated(pageNum);
-		model.addObject("title", "Spring Security Login Form - Database Authentication");
-		model.addObject("message", "This is default page!");
+		List<Question> questions = quesDao.findQuestionsPaginated(pageNum);
+		model.addObject("questions", questions);
+		int noOfRecords = quesDao.getNoOfRecords();
+		int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / 20);
+		model.addObject("noOfPages", noOfPages);
+		model.addObject("currentPage", pageNum);
 		model.setViewName("hello");
 		return model;
 
 	}
-	
+
 	@RequestMapping(value = { "/Add_Question/create" }, method = RequestMethod.POST)
-	public ModelAndView addQuestion(Principal principal,
-			@RequestParam(value = "title", required = false) String title,
+	public ModelAndView addQuestion(Principal principal, @RequestParam(value = "title", required = false) String title,
 			@RequestParam(value = "text", required = true) String text) {
-	
+
 		ModelAndView model = new ModelAndView();
 		if (title == null) {
 			model.addObject("message", "Please add title");
@@ -60,24 +68,23 @@ public class MainController {
 		if (text == null) {
 			model.addObject("message", "Please add your question");
 		}
-		User user= userDao.findByUsername(principal.getName());
-		quesDao.addQuestion(title,text,user.getId());
+		User user = userDao.findByUsername(principal.getName());
+		quesDao.addQuestion(title, text, user.getId());
 		model.addObject("message", "You have successfully entered your question!");
 		model.setViewName("hello");
 		return model;
 
 	}
-	
-	
+
 	@RequestMapping(value = { "/Add_Question" }, method = RequestMethod.GET)
 	public ModelAndView QuestionPage() {
 		List<String> categories = new ArrayList<String>();
 		categories = categoryDao.getAllCategories();
-		
+
 		ModelAndView model = new ModelAndView();
 		model.addObject("title", "Spring Security Login Form - Database Authentication");
 		model.addObject("message", "This is default page!");
-		model.addObject("category_list",categories);
+		model.addObject("category_list", categories);
 		model.setViewName("Question");
 		return model;
 	}
@@ -94,6 +101,23 @@ public class MainController {
 	 * 
 	 * }
 	 */
+
+	@RequestMapping(value = "/quesDetail", method = RequestMethod.GET)
+	public ModelAndView questionDetails(@RequestParam(value = "quesId", required = true) Integer quesId,
+			@RequestParam(value = "error", required = false) String error) {
+		ModelAndView model = new ModelAndView();
+		Question quesDetails = quesDao.findByQuestionId(quesId);
+		quesDetails.setText(quesDetails.getText().replaceFirst("\\n", "").replace("\n", "<br/>").replace(" ", "&nbsp;")
+				.replace("\"", "'"));
+		for (Answer answer : quesDetails.getAnswers()) {
+			answer.setText(answer.getText().replaceFirst("\\n", "").replace("\n", "<br/>").replace(" ", "&nbsp;")
+					.replace("\"", "'"));
+		}
+		model.addObject("question", quesDetails);
+		model.addObject("error", error);
+		model.setViewName("questionDetails");
+		return model;
+	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView login(@RequestParam(value = "error", required = false) String error,
@@ -123,6 +147,51 @@ public class MainController {
 			model.addObject("username", userDetail.getUsername());
 		}
 		model.setViewName("403");
+		return model;
+	}
+
+	@RequestMapping(value = "/updateAnswer", method = RequestMethod.POST)
+	public ModelAndView addAnswer(Principal principal, @RequestParam(value = "quesId", required = false) Integer quesId,
+			@RequestParam(value = "answer", required = true) String answer,
+			@RequestParam(value = "ansId", required = false) Integer ansId) {
+		ModelAndView model = new ModelAndView();
+		User user = userDao.findByUsername(principal.getName());
+		boolean success = false;
+		if (ansId == null)
+			success = ansDao.addAnswer(quesId, user.getId(), answer);
+		else
+			success = ansDao.updateAnswer(ansId, answer);
+
+		if (!success) {
+			model.setViewName("redirect:/quesDetail?quesId=" + quesId + "&error=Could%20not%20add%20answer");
+		} else
+			model.setViewName("redirect:/quesDetail?quesId=" + quesId);
+		return model;
+	}
+
+	@RequestMapping(value = "/deleteAnswer", method = RequestMethod.POST)
+	public ModelAndView deleteAnswer(@RequestParam(value = "quesId", required = true) Integer quesId,
+			@RequestParam(value = "ansId", required = true) Integer ansId) {
+		ModelAndView model = new ModelAndView();
+		boolean success = ansDao.deleteAnswer(ansId);
+		if (!success) {
+			model.setViewName("redirect:/quesDetail?quesId=" + quesId + "&error=Could%20not%20delete%20answer");
+		} else
+			model.setViewName("redirect:/quesDetail?quesId=" + quesId);
+		return model;
+	}
+
+	@RequestMapping(value = "/createUser", method = RequestMethod.POST)
+	public ModelAndView signUp(@RequestParam(value = "fullname", required = true) String fullname,
+			@RequestParam(value = "username", required = true) String username,
+			@RequestParam(value = "password", required = true) String password) {
+		ModelAndView model = new ModelAndView();
+		boolean success = userDao.createUser(fullname, username, password);
+		if (!success) {
+			model.addObject("error", "Could%20not%20create%20account.");
+		} else
+			model.addObject("msg", "Sign%20up%20successful");
+		model.setViewName("login");
 		return model;
 	}
 
