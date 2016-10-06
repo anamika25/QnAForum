@@ -96,7 +96,8 @@ public class MainController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView login(@RequestParam(value = "error", required = false) String error,
-			@RequestParam(value = "logout", required = false) String logout) {
+			@RequestParam(value = "logout", required = false) String logout,
+			@RequestParam(value = "signUpMessage", required = false) String signUpMessage) {
 
 		ModelAndView model = new ModelAndView();
 		if (error != null) {
@@ -104,6 +105,9 @@ public class MainController {
 		}
 		if (logout != null) {
 			model.addObject("msg", "You've been logged out successfully.");
+		}
+		if (signUpMessage != null) {
+			model.addObject("msg", signUpMessage);
 		}
 		model.setViewName("login");
 		return model;
@@ -161,12 +165,16 @@ public class MainController {
 			@RequestParam(value = "username", required = true) String username,
 			@RequestParam(value = "password", required = true) String password) {
 		ModelAndView model = new ModelAndView();
+		User user = userDao.findByUsername(username);
+		if (user != null) {
+			model.setViewName("redirect:/login?signUpMessage=Username%20already%20exists");
+			return model;
+		}
 		boolean success = userDao.createUser(fullname, username, password);
 		if (!success) {
-			model.addObject("error", "Could%20not%20create%20account.");
+			model.setViewName("redirect:/login?signUpMessage=Could%20not%20create%20account.");
 		} else
-			model.addObject("msg", "Sign%20up%20successful");
-		model.setViewName("login");
+			model.setViewName("redirect:/login?signUpMessage=Sign%20up%20successful");
 		return model;
 	}
 
