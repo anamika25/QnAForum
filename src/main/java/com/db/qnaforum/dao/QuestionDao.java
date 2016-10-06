@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
+import javax.swing.JOptionPane;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -90,5 +91,35 @@ public class QuestionDao {
 			}
 		}
 	}
-
+	
+	public Question addQuestion(String title, String text, int userid) {
+		String sql = "INSERT INTO Questions (title,text,user_id) VALUES (?,?,?);";
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, title);
+			ps.setString(2, text);
+			ps.setInt(3, userid);
+			Question ques = null;
+			int rs = ps.executeUpdate();
+			if (rs==1) {
+				JOptionPane.showMessageDialog(null, "Your Question has been submitted successfully");
+			}
+			//rs.close();
+			ps.close();
+			return ques;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+	
+	
 }

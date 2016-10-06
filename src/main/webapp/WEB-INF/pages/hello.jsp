@@ -2,13 +2,21 @@
 	uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-=======
 <%@include file="header.jsp"%>
 <html>
 
 <head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+	crossorigin="anonymous">
+	
 <!-- <link rel="stylesheet" href="/resources/css/homepage.css" type="text/css"> -->
-<link href="<c:url value="/resources/css/homepage.css" />" rel="stylesheet">
+<link href="<c:url value="/resources/css/homepage.css" />" rel="stylesheet" />
+<script type="text/javascript" src="<c:url value="/resources/jquery.js" />"></script>
+<script type="text/javascript" src="<c:url value="/resources/jquery.simplePagination.js"/>"></script>
+<link type="text/css" rel="stylesheet" href="<c:url value="resources/css/simplePagination.css"/>"/>
 </head>
 
 <body>
@@ -25,15 +33,6 @@
 				value="${_csrf.token}" />
 		</form>
 		
-		<div class="header">
-			QnA forum
-		</div>
-		
-<!-- 		<button> -->
-<!-- 		<div class="button"> -->
-<!-- 			Add Question -->
-<!-- 		</div> -->
-<!-- 		</button> -->
 		
  		<form action="${questionUrl}" method="get" id="addQuestion"> 
 			<input type="button" name="button 1" onclick="addQuestion()"
@@ -51,18 +50,42 @@
 			function formSubmit() {
 				document.getElementById("logoutForm").submit();
 			}
+			
+			document.getElementById("paginator").pagination({
+		        items: 44,
+		        itemsOnPage: 20,
+		        cssStyle: 'light-theme'
+		    });
+		});
+
 		</script>
+
+<div id="paginator"></div>
+
 <%--
-<%! var pages = 44;%>
 <div class="text-center">
 <ul class="pagination ">
-<c:forEach var="i" begin="1" end="${pages}">
+<c:forEach var="i" begin="1" end="44">
 <li id="page${i-1}" class="page-item"><a
-href="./welcome?&page=${i-1}">${i}</a></li>
+href="./welcome?pageNum=${i-1}">${i}</a></li>
 </c:forEach>
 </ul>
+</div> 
+
+
+<div id="paginator">
+<ul class="pagination">
+              <li class="disabled"><a href="#">«</a></li>
+              <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#">»</a></li>
+            </ul>
 </div>
 --%>
+
 
 		<c:if test="${pageContext.request.userPrincipal.name != null}">
 			<h2>

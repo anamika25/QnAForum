@@ -31,10 +31,8 @@
 	<authentication-manager>
 		<authentication-provider>
 			<jdbc-user-service data-source-ref="dataSource"
-				users-by-username-query=
-					"select username,password, enabled from users where username=?"
-				authorities-by-username-query=
-					"select username, role from users where username =?  " /> 
+users-by-username-query="select username, password, 1 from users where username=?"
+authorities-by-username-query="select username, 'ROLE_USER' from users where username =?  " />
 		</authentication-provider>
 	</authentication-manager>
 
