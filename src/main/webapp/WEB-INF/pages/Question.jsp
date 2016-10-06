@@ -1,17 +1,41 @@
 <%@taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@include file="header.jsp"%>
 <html>
 
 <head>
-<!-- <link rel="stylesheet" href="/resources/css/homepage.css" type="text/css"> -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+	crossorigin="anonymous">
+
 <link href="<c:url value="/resources/css/homepage.css" />" rel="stylesheet">
+<link href="<c:url value="/resources/css/semantic.min.css" />" rel="stylesheet">
+<script src="/resources/semantic.min.js"></script>
 </head>
 
 <body>
 <%-- 	<h1>Title : ${title}</h1> --%>
 <%-- 	<h1>Message : ${message}</h1> --%>
+
+<form name='QuestionForm'
+action="<c:url value='/Add_Question/create?${_csrf.parameterName}=${_csrf.token}' />" method='POST'>
+<div style="margin-top: 12px" class="input-group">
+<select class="ui fluid search dropdown" multiple="">
+  <option value="">Category</option>
+  <c:forEach items="${category_list}" var="category">
+        <option value=""> ${category} </option>
+   </c:forEach>
+</select>
+</div>
+<label for="question_create">Write your Question here:</label><br>
+<textarea name= "title" class="title" rows="1" id="title"></textarea><br><br>
+  <textarea name= "text" class="text" rows="5" id="text"></textarea><br><br>
+</div>
+<button type="submit" value="submit" class="btn btn-success">Submit</button>
+</form>					
 
 	<sec:authorize access="hasRole('ROLE_USER')">
 		<!-- For login user -->
@@ -21,11 +45,6 @@
 			<input type="hidden" name="${_csrf.parameterName}"
 				value="${_csrf.token}" />
 		</form>
-		
-		
-		<div class="header">
-			Question Page
-		</div>
 
 		<script>
 		function add_text(text){

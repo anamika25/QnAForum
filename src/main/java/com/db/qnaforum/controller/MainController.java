@@ -1,6 +1,7 @@
 package com.db.qnaforum.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.db.qnaforum.dao.AnswerDao;
+import com.db.qnaforum.dao.CategoryDao;
 import com.db.qnaforum.dao.QuestionDao;
 import com.db.qnaforum.dao.UserDao;
+import com.db.qnaforum.dao.AnswerDao;
 import com.db.qnaforum.entity.Answer;
 import com.db.qnaforum.entity.Question;
 import com.db.qnaforum.entity.User;
@@ -26,7 +28,8 @@ public class MainController {
 
 	@Autowired
 	private QuestionDao quesDao;
-
+	@Autowired
+	private CategoryDao categoryDao;
 	@Autowired
 	private UserDao userDao;
 
@@ -54,12 +57,34 @@ public class MainController {
 
 	}
 
+	@RequestMapping(value = { "/Add_Question/create" }, method = RequestMethod.POST)
+	public ModelAndView addQuestion(Principal principal, @RequestParam(value = "title", required = false) String title,
+			@RequestParam(value = "text", required = true) String text) {
+
+		ModelAndView model = new ModelAndView();
+		if (title == null) {
+			model.addObject("message", "Please add title");
+		}
+		if (text == null) {
+			model.addObject("message", "Please add your question");
+		}
+		User user = userDao.findByUsername(principal.getName());
+		quesDao.addQuestion(title, text, user.getId());
+		model.addObject("message", "You have successfully entered your question!");
+		model.setViewName("hello");
+		return model;
+
+	}
+
 	@RequestMapping(value = { "/Add_Question" }, method = RequestMethod.GET)
 	public ModelAndView QuestionPage() {
+		List<String> categories = new ArrayList<String>();
+		categories = categoryDao.getAllCategories();
 
 		ModelAndView model = new ModelAndView();
 		model.addObject("title", "Spring Security Login Form - Database Authentication");
 		model.addObject("message", "This is default page!");
+		model.addObject("category_list", categories);
 		model.setViewName("Question");
 		return model;
 	}

@@ -84,5 +84,31 @@ public class CategoryDao {
 			}
 		}
 	}
+	public List<String> getAllCategories() {
+		String sql = "SELECT DISTINCT name FROM Category";
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			List<String> categories = new ArrayList<String>();
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				String category = rs.getString("name");
+				categories.add(category);
+			}
+			rs.close();
+			ps.close();
+			return categories;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
 
 }

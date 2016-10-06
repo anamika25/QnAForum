@@ -14,8 +14,12 @@ color: blue;
 }
 
 .div1{
-	text-align: center;
+	margin-top: 20px;
+	margin-right: auto;
+	margin-bottom: 10px;
+	margin-left: auto;
 }
+
 
 .button {
     background-color: #4CAF50; /* Green */
