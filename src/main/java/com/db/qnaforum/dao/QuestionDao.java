@@ -29,6 +29,12 @@ public class QuestionDao {
 	@Autowired
 	private AnswerDao answerDao;
 
+	private int noOfRecords;
+
+	public int getNoOfRecords() {
+		return noOfRecords;
+	}
+
 	public Question findByQuestionId(int quesId) {
 		String sql = "SELECT * FROM Questions WHERE question_id = ?";
 		Connection conn = null;
@@ -61,7 +67,7 @@ public class QuestionDao {
 	}
 
 	public List<Question> findQuestionsPaginated(int pageId) {
-		String sql = "SELECT * FROM Questions LIMIT ? OFFSET ?";
+		String sql = "SELECT SQL_CALC_FOUND_ROWS * FROM Questions ORDER BY question_id DESC LIMIT ? OFFSET ?";
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
@@ -77,6 +83,10 @@ public class QuestionDao {
 				questions.add(ques);
 			}
 			rs.close();
+
+			rs = ps.executeQuery("SELECT FOUND_ROWS()");
+			if (rs.next())
+				this.noOfRecords = rs.getInt(1);
 			ps.close();
 			return questions;
 		} catch (SQLException e) {

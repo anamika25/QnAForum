@@ -5,69 +5,75 @@
 <html>
 
 <head>
-<!-- <link rel="stylesheet" href="/resources/css/homepage.css" type="text/css"> -->
-<link href="<c:url value="/resources/css/homepage.css" />" rel="stylesheet">
+<script type="text/javascript" src="/resources/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript"
+	src="/resources/js/jquery.simplePagination.js"></script>
+<link href="<c:url value="/resources/css/homepage.css" />"
+	rel="stylesheet">
+<link href="<c:url value="/resources/css/simplePagination.css" />"
+	rel="stylesheet">
+
+<script>
+	function addQuestion() {
+		document.getElementById("addQuestion").submit();
+	}
+</script>
 </head>
+<style>
+.navigationButton {
+	background-color: #0095ff;
+	padding: 10px;
+	color: #FFF;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 11px;
+	border-radius: 2px;
+	margin-bottom: 5px;
+	margin-right: 5px;
+	text-decoration: none;
+}
 
+.quesTitle {
+	border-bottom: 1px solid #e4e6e8;
+	font-size: 18px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.quesTitle:hover {
+	background-color: #f2f2f2;
+}
+
+.quesLink {
+	text-decoration: none;
+	color: blue;
+}
+</style>
 <body>
-<%-- 	<h1>Title : ${title}</h1> --%>
-<%-- 	<h1>Message : ${message}</h1> --%>
 
-	<sec:authorize access="hasRole('ROLE_USER')">
-		<!-- For login user -->
-		<c:url value="/j_spring_security_logout" var="logoutUrl" />
-		<c:url value="/Add_Question" var="questionUrl" />
-		
-		<form action="${logoutUrl}" method="post" id="logoutForm">
-			<input type="hidden" name="${_csrf.parameterName}"
-				value="${_csrf.token}" />
-		</form>
-		
-		<div class="header">
-			QnA forum
-		</div>
-		
-<!-- 		<button> -->
-<!-- 		<div class="button"> -->
-<!-- 			Add Question -->
-<!-- 		</div> -->
-<!-- 		</button> -->
-		
- 		<form action="${questionUrl}" method="get" id="addQuestion"> 
-			<input type="button" name="button 1" onclick="addQuestion()"
-				value="Add Question" />
-		</form>
-		
-		
-		<script>
-			function addQuestion() {
- 				document.getElementById("addQuestion").submit();
-			}
-		</script>
-		
-		<script>
-			function formSubmit() {
-				document.getElementById("logoutForm").submit();
-			}
-		</script>
-<%--
-<%! var pages = 44;%>
-<div class="text-center">
-<ul class="pagination ">
-<c:forEach var="i" begin="1" end="${pages}">
-<li id="page${i-1}" class="page-item"><a
-href="./welcome?&page=${i-1}">${i}</a></li>
-</c:forEach>
-</ul>
-</div>
---%>
+	<form action="${questionUrl}" method="get" id="addQuestion">
+		<input type="button" name="button 1" onclick="addQuestion()"
+			value="Add Question" />
+	</form>
+	<ul id="questions">
+		<c:forEach items="${questions}" var="ques" varStatus="ctr">
+			<li class="quesTitle"><a class="quesLink"
+				href="quesDetail?quesId=${ques.questionId}" target="_blank">${ques.title}</a></li>
+		</c:forEach>
+	</ul>
 
-		<c:if test="${pageContext.request.userPrincipal.name != null}">
-			<h2>
-				User : ${pageContext.request.userPrincipal.name} | <a
-					href="javascript:formSubmit()"> Logout</a>
-			</h2>
+	<div style="text-align: center;">
+		<%--For displaying Previous link except for the 1st page --%>
+		<c:if test="${currentPage != 0}">
+			<a class="navigationButton" href="welcome?pageNum=${currentPage - 1}">Previous</a>
 		</c:if>
-	</sec:authorize>
+
+		<%--For displaying Next link --%>
+		<c:if test="${currentPage lt noOfPages}">
+			<a class="navigationButton" href="welcome?pageNum=${currentPage + 1}">Next</a>
+		</c:if>
+	</div>
+
 </body>
 </html>
