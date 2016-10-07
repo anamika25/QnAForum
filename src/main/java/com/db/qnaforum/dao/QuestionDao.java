@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
-import javax.swing.JOptionPane;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.db.qnaforum.entity.Question;
+import com.mysql.jdbc.Statement;
 
 @Repository
 public class QuestionDao {
@@ -101,24 +101,35 @@ public class QuestionDao {
 			}
 		}
 	}
-	
-	public Question addQuestion(String title, String text, int userid) {
-		String sql = "INSERT INTO Questions (title,text,user_id) VALUES (?,?,?);";
+
+	public int addQuestion(String title, String text, int userid, List<Integer> categoryIds) {
+		String sql = "INSERT INTO Questions (title,text,user_id) VALUES (?,?,?)";
+		String sql1 = "INSERT INTO Question_Category_mapping (question_id,category_id) VALUES (?,?)";
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
+			PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement ps1 = conn.prepareStatement(sql1);
 			ps.setString(1, title);
 			ps.setString(2, text);
 			ps.setInt(3, userid);
-			Question ques = null;
 			int rs = ps.executeUpdate();
-			if (rs==1) {
-				JOptionPane.showMessageDialog(null, "Your Question has been submitted successfully");
-			}
-			//rs.close();
+			int questionId = 0;
+			if (rs == 1) {
+				ResultSet r = ps.getGeneratedKeys();
+				if (r.next()) {
+					questionId = r.getInt(1);
+					ps1.setInt(1, questionId);
+					for (int catId : categoryIds) {
+						ps1.setInt(2, catId);
+						ps1.executeUpdate();
+					}
+				}
+				r.close();
+			} else
+				return 0;
 			ps.close();
-			return ques;
+			return questionId;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -130,6 +141,5 @@ public class QuestionDao {
 			}
 		}
 	}
-	
-	
+
 }

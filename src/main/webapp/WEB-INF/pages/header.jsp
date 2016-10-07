@@ -32,7 +32,9 @@ header div h5 {
 </script>
 </head>
 <header>
-	<h1>QnAForum</h1>
+	<h1>
+		<a style="text-decoration: none; color: white;" href="/">QnAForum</a>
+	</h1>
 	<c:url value="/j_spring_security_logout" var="logoutUrl" />
 
 	<c:if test="${pageContext.request.userPrincipal.name != null}">

@@ -11,78 +11,106 @@
 	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
 	crossorigin="anonymous">
 
-<link href="<c:url value="/resources/css/homepage.css" />" rel="stylesheet">
-<link href="<c:url value="/resources/css/semantic.min.css" />" rel="stylesheet">
-<script src="/resources/semantic.min.js"></script>
+<link href="<c:url value="/resources/css/homepage.css" />"
+	rel="stylesheet">
+<script type="text/javascript" src="/resources/js/jquery-3.1.1.min.js"></script>
+<link href="<c:url value="/resources/css/select2.min.css" />"
+	rel="stylesheet" />
+<script src="/resources/js/select2.min.js"></script>
+
+<script type="text/javascript">
+	$(".js-example-basic-multiple").select2();
+</script>
+<script>
+	function add_text(text) {
+		var TheTextBox = document.getElementById("textbox");
+		TheTextBox.value = TheTextBox.value + text;
+	}
+
+	function Add() {
+		var name1 = document.createElement("select");
+		name1.setAttribute('id', "year1")
+		name1.setAttribute('oncreate', "Date1()");
+	}
+
+	function Date1() {
+		d = new Date();
+		curr_year = d.getFullYear();
+		for (i = 0; i < 5; i++) {
+			document.getElementById('year1').options[i] = new Option(
+					(curr_year - 1) - i, (curr_year - 1) - i);
+		}
+	}
+</script>
 </head>
 
 <body>
-<%-- 	<h1>Title : ${title}</h1> --%>
-<%-- 	<h1>Message : ${message}</h1> --%>
+	<form class="form-horizontal"
+		action="<c:url value='/Add_Question/create?${_csrf.parameterName}=${_csrf.token}' />"
+		method='POST' style="margin-top: 20px">
+		<fieldset>
+			<!-- Form Name -->
+			<legend style="text-align: center;">Add a Question</legend>
 
-<form name='QuestionForm'
-action="<c:url value='/Add_Question/create?${_csrf.parameterName}=${_csrf.token}' />" method='POST'>
-<div style="margin-top: 12px" class="input-group">
-<select class="ui fluid search dropdown" multiple="">
-  <option value="">Category</option>
-  <c:forEach items="${category_list}" var="category">
-        <option value=""> ${category} </option>
-   </c:forEach>
-</select>
-</div>
-<label for="question_create">Write your Question here:</label><br>
-<textarea name= "title" class="title" rows="1" id="title"></textarea><br><br>
-  <textarea name= "text" class="text" rows="5" id="text"></textarea><br><br>
-</div>
-<button type="submit" value="submit" class="btn btn-success">Submit</button>
-</form>					
+			<!-- Text input-->
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="textinput">Title</label>
+				<div class="col-md-4">
+					<input id="textinput" name="title" type="text" placeholder="Title"
+						class="form-control input-md">
+				</div>
+			</div>
 
-	<sec:authorize access="hasRole('ROLE_USER')">
-		<!-- For login user -->
-		<c:url value="/j_spring_security_logout" var="logoutUrl" />
-		
-		<form action="${logoutUrl}" method="post" id="logoutForm">
-			<input type="hidden" name="${_csrf.parameterName}"
-				value="${_csrf.token}" />
-		</form>
+			<!-- Textarea -->
+			<div class="form-group" style="height: 100px;">
+				<label class="col-md-4 control-label" for="textarea">Detailed
+					description</label>
+				<div class="col-md-4">
+					<textarea class="form-control" id="textarea"
+						placeholder="Describe in detail" name="text" style="height: 100px;"></textarea>
+				</div>
+			</div>
 
-		<script>
-		function add_text(text){
-		    var TheTextBox = document.getElementById("textbox");
-		    TheTextBox.value = TheTextBox.value + text;
-		}
-		
-		function Add()
-		{
-			var name1 = document.createElement("select");
-  			name1.setAttribute('id',"year1")
-  			name1.setAttribute('oncreate',"Date1()");
-		}
-	
-		function Date1()
-		{
-  			d = new Date();
-  			curr_year = d.getFullYear();
-  			for(i = 0; i < 5; i++)
-  			{
-    			document.getElementById('year1').options[i] = new Option((curr_year-1)-i,(curr_year-1)-i);
-  			}
-		}
-		</script>
-		<script>
-			function formSubmit() {
-				document.getElementById("logoutForm").submit();
-			}
-		</script>
+			<!-- Select Multiple -->
+			<div class="form-group" style="height: 150px;">
+				<label class="col-md-4 control-label" for="selectmultiple">Tags</label>
+				<div class="col-md-4">
+					<select id="selectmultiple" name="categories" class="form-control"
+						multiple="multiple" style="height: 150px;">
+						<c:forEach items="${category_list}" var="category" varStatus="ctr">
+							<option id="${category.categoryId}"
+								value="${category.categoryId}">${category.name}</option>
+						</c:forEach>
+					</select>
+				</div>
+			</div>
 
-		<c:if test="${pageContext.request.userPrincipal.name != null}">
-			<h2>
-				User : ${pageContext.request.userPrincipal.name} | <a
-					href="javascript:formSubmit()"> Logout</a>
-			</h2>
-		</c:if>
+			<!-- Button -->
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="singlebutton"></label>
+				<div class="col-md-4">
+					<button type="submit" value="submit" id="singlebutton"
+						name="singlebutton" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
 
+		</fieldset>
+	</form>
 
-	</sec:authorize>
+	<%-- <form name='QuestionForm'
+		action="<c:url value='/Add_Question/create?${_csrf.parameterName}=${_csrf.token}' />"
+		method='POST'>
+		<select multiple="true" name="categories" class="form-control">
+			<c:forEach items="${category_list}" var="category" varStatus="ctr">
+				<option id="${category.categoryId}" value="${category.categoryId}">${category.name}</option>
+			</c:forEach>
+		</select> <label for="question_create">Write your Question here:</label><br>
+		<textarea name="title" class="title" rows="1" id="title"></textarea>
+		<br> <br>
+		<textarea name="text" class="text" rows="5" id="text"></textarea>
+		<br> <br>
+		<button type="submit" value="submit" class="btn btn-success">Submit</button>
+	</form> --%>
+
 </body>
 </html>

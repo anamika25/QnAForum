@@ -14,11 +14,7 @@
 
 <link href="<c:url value="/resources/css/homepage.css" />"
 	rel="stylesheet" />
-<script type="text/javascript"
-	src="<c:url value="/resources/jquery.js" />"></script>
 <script type="text/javascript" src="/resources/js/jquery-3.1.1.min.js"></script>
-<link href="<c:url value="/resources/css/homepage.css" />"
-	rel="stylesheet">
 
 <script>
 	function addQuestion() {
@@ -27,7 +23,7 @@
 </script>
 </head>
 <style>
-.navigationButton {
+.navigationButton, #addQues {
 	background-color: #0095ff;
 	padding: 10px;
 	color: #FFF;
@@ -64,32 +60,16 @@
 		<c:url value="/j_spring_security_logout" var="logoutUrl" />
 		<c:url value="/Add_Question" var="questionUrl" />
 
-
-		<form action="${questionUrl}" method="get" id="addQuestion">
-			<input type="button" name="button 1" onclick="addQuestion()"
-				value="Add Question" />
+		<c:if test="${not empty message}">
+			<div class="alert alert-danger">
+				<div class="error">${message}</div>
+			</div>
+		</c:if>
+		<form action="${questionUrl}" method="get" id="addQuestion"
+			style="text-align: center;">
+			<input type="button" name="button 1" id="addQues"
+				onclick="addQuestion()" value="Add Question" />
 		</form>
-
-
-		<script>
-			function addQuestion() {
- 				document.getElementById("addQuestion").submit();
-			}
-		</script>
-
-		<script>
-			function formSubmit() {
-				document.getElementById("logoutForm").submit();
-			}
-			
-			document.getElementById("paginator").pagination({
-		        items: 44,
-		        itemsOnPage: 20,
-		        cssStyle: 'light-theme'
-		    });
-		});
-
-		</script>
 
 		<ul id="questions">
 			<c:forEach items="${questions}" var="ques" varStatus="ctr">

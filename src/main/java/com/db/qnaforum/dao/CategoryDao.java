@@ -84,16 +84,17 @@ public class CategoryDao {
 			}
 		}
 	}
-	public List<String> getAllCategories() {
-		String sql = "SELECT DISTINCT name FROM Category";
+
+	public List<Category> getAllCategories() {
+		String sql = "SELECT * FROM Category";
 		Connection conn = null;
 		try {
 			conn = dataSource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
-			List<String> categories = new ArrayList<String>();
+			List<Category> categories = new ArrayList<Category>();
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				String category = rs.getString("name");
+				Category category = new Category(rs.getInt("category_id"), rs.getString("name"));
 				categories.add(category);
 			}
 			rs.close();
