@@ -15,13 +15,7 @@
 <link href="<c:url value="/resources/css/homepage.css" />"
 	rel="stylesheet">
 <script type="text/javascript" src="/resources/js/jquery-3.1.1.min.js"></script>
-<link href="<c:url value="/resources/css/select2.min.css" />"
-	rel="stylesheet" />
-<script src="/resources/js/select2.min.js"></script>
 
-<script type="text/javascript">
-	$(".js-example-basic-multiple").select2();
-</script>
 <script>
 	function add_text(text) {
 		var TheTextBox = document.getElementById("textbox");

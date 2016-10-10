@@ -120,10 +120,11 @@ public class QuestionDao {
 				if (r.next()) {
 					questionId = r.getInt(1);
 					ps1.setInt(1, questionId);
-					for (int catId : categoryIds) {
-						ps1.setInt(2, catId);
-						ps1.executeUpdate();
-					}
+					if (categoryIds != null)
+						for (int catId : categoryIds) {
+							ps1.setInt(2, catId);
+							ps1.executeUpdate();
+						}
 				}
 				r.close();
 			} else
@@ -160,6 +161,31 @@ public class QuestionDao {
 			rs.close();
 			ps.close();
 			return questions;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	public boolean deleteQuestion(Integer quesId) {
+		String sql = "DELETE FROM Questions WHERE question_id = ?";
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			ps.setInt(1, quesId);
+			int key = ps.executeUpdate();
+			if (key != 0) {
+				return true;
+			}
+			ps.close();
+			return false;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {

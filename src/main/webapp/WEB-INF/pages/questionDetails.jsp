@@ -49,11 +49,22 @@
 		    
 		  });
 	}
+	
+	function deleteQuestion(quesId,ansId) {
+		var url = "deleteQuestion?${_csrf.parameterName}=${_csrf.token}&quesId="+quesId;
+		confirm(function(){
+			$.post(url, function(){
+				window.location.href = "/welcome";
+			});
+		  }, function(){
+		    
+		  });
+	}
 </script>
 </head>
 
 <style>
-.tags div {
+.tagButtons {
 	background-color: #a9a9a9;
 	padding: 10px;
 	color: #fff;
@@ -112,10 +123,15 @@ textarea {
 		<p style="border-bottom: 1px solid #e4e6e8; padding-bottom: 7px;">${question.text }</p>
 		<div class="tags">
 			<c:forEach items="${question.categories}" var="cat" varStatus="ctr">
-				<div>${cat.name }</div>
+				<div class="tagButtons">${cat.name }</div>
 			</c:forEach>
-			<h4 style="float: right; color: red;">Posted By:
-				${question.user.username}</h4>
+			<c:if
+				test="${pageContext.request.userPrincipal.name == question.user.username}">
+				<div class="deleteButton" style="float: right;"
+					onClick="deleteQuestion(${question.questionId});">Delete Question</div>
+			</c:if>
+			<h4 style="float: right; color: red; margin-top: 8px; margin-right: 5px;">Posted
+				By: ${question.user.username}</h4>
 		</div>
 
 		<div class="addAnswerButton"

@@ -183,6 +183,17 @@ public class MainController {
 		return model;
 	}
 
+	@RequestMapping(value = "/deleteQuestion", method = RequestMethod.POST)
+	public ModelAndView deleteQuestion(@RequestParam(value = "quesId", required = true) Integer quesId) {
+		ModelAndView model = new ModelAndView();
+		boolean success = quesDao.deleteQuestion(quesId);
+		if (!success) {
+			model.setViewName("redirect:/quesDetail?quesId=" + quesId + "&error=Could%20not%20delete%20question");
+		} else
+			model.setViewName("redirect:/welcome");
+		return model;
+	}
+
 	@RequestMapping(value = "/createUser", method = RequestMethod.POST)
 	public ModelAndView signUp(@RequestParam(value = "fullname", required = true) String fullname,
 			@RequestParam(value = "username", required = true) String username,

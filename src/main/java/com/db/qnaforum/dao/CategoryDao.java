@@ -33,7 +33,9 @@ public class CategoryDao {
 				int categoryId = rs.getInt("category_id");
 				categoryIds.add(categoryId);
 			}
-			List<Category> categories = findCategoriesByIdList(categoryIds);
+			List<Category> categories = null;
+			if (!categoryIds.isEmpty())
+				categories = findCategoriesByIdList(categoryIds);
 			rs.close();
 			ps.close();
 			return categories;
