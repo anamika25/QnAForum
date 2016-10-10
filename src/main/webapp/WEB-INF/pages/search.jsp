@@ -6,7 +6,7 @@
 <html>
 
 <head>
-<title>Welcome Page</title>
+<title>Search Results</title>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
@@ -17,11 +17,6 @@
 	rel="stylesheet" />
 <script type="text/javascript" src="/resources/js/jquery-3.1.1.min.js"></script>
 
-<script>
-	function addQuestion() {
-		document.getElementById("addQuestion").submit();
-	}
-</script>
 </head>
 <style>
 .navigationButton, #addQues {
@@ -57,41 +52,21 @@
 <body>
 
 	<sec:authorize access="hasRole('ROLE_USER')">
-		<!-- For login user -->
-		<c:url value="/j_spring_security_logout" var="logoutUrl" />
-		<c:url value="/Add_Question" var="questionUrl" />
 
 		<c:if test="${not empty message}">
-			<div class="alert alert-danger">
-				<div class="error">${message}</div>
-			</div>
+			<h1>${message}</h1>
 		</c:if>
-		<form action="${questionUrl}" method="get" id="addQuestion"
-			style="text-align: center;">
-			<input type="button" name="button 1" id="addQues"
-				onclick="addQuestion()" value="Add Question" />
-		</form>
+		<c:if test="${empty message}">
+			<h1>Top 30 Search Results:</h1>
 
-		<ul id="questions">
-			<c:forEach items="${questions}" var="ques" varStatus="ctr">
-				<li class="quesTitle"><a class="quesLink"
-					href="quesDetail?quesId=${ques.questionId}">${ques.title}</a></li>
-			</c:forEach>
-		</ul>
+			<ul id="questions">
+				<c:forEach items="${questions}" var="ques" varStatus="ctr">
+					<li class="quesTitle"><a class="quesLink"
+						href="quesDetail?quesId=${ques.questionId}">${ques.title}</a></li>
+				</c:forEach>
+			</ul>
 
-		<div style="text-align: center;">
-			<%--For displaying Previous link except for the 1st page --%>
-			<c:if test="${currentPage != 0}">
-				<a class="navigationButton"
-					href="welcome?pageNum=${currentPage - 1}">Previous</a>
-			</c:if>
-
-			<%--For displaying Next link --%>
-			<c:if test="${currentPage lt noOfPages}">
-				<a class="navigationButton"
-					href="welcome?pageNum=${currentPage + 1}">Next</a>
-			</c:if>
-		</div>
+		</c:if>
 	</sec:authorize>
 </body>
 </html>

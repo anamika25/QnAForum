@@ -142,4 +142,34 @@ public class QuestionDao {
 		}
 	}
 
+	public List<Question> searchQuestions(String searchText) {
+		String sql = "SELECT * FROM Questions WHERE title like ? ORDER BY question_id LIMIT 30";
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, '%' + searchText + '%');
+			List<Question> questions = new ArrayList<Question>();
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Question ques = new Question(rs.getInt("question_id"), rs.getString("title"), rs.getString("text"),
+						rs.getInt("user_id"));
+				ques.setUser(userDao.findByUserId(ques.getUserId()));
+				questions.add(ques);
+			}
+			rs.close();
+			ps.close();
+			return questions;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
 }

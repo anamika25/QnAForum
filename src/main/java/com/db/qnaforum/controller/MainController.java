@@ -97,11 +97,19 @@ public class MainController {
 			@RequestParam(value = "error", required = false) String error) {
 		ModelAndView model = new ModelAndView();
 		Question quesDetails = quesDao.findByQuestionId(quesId);
-		quesDetails.setText(quesDetails.getText().replaceFirst("\\n", "").replace("\n", "<br/>").replace(" ", "&nbsp;")
-				.replace("\"", "'"));
+		if (quesDetails.getTitle().startsWith("\n")) {
+			quesDetails.setTitle(quesDetails.getTitle().replaceFirst("\\n", ""));
+		}
+		if (quesDetails.getText().startsWith("\n")) {
+			quesDetails.setText(quesDetails.getText().replaceFirst("\\n", ""));
+		}
+		quesDetails.setTitle(quesDetails.getTitle().replace("\n", "<br/>").replace(" ", "&nbsp;").replace("\"", "'"));
+		quesDetails.setText(quesDetails.getText().replace("\n", "<br/>").replace(" ", "&nbsp;").replace("\"", "'"));
 		for (Answer answer : quesDetails.getAnswers()) {
-			answer.setText(answer.getText().replaceFirst("\\n", "").replace("\n", "<br/>").replace(" ", "&nbsp;")
-					.replace("\"", "'"));
+			if (answer.getText().startsWith("\n")) {
+				answer.setText(answer.getText().replaceFirst("\\n", ""));
+			}
+			answer.setText(answer.getText().replace("\n", "<br/>").replace(" ", "&nbsp;").replace("\"", "'"));
 		}
 		model.addObject("question", quesDetails);
 		model.addObject("error", error);
@@ -190,6 +198,17 @@ public class MainController {
 			model.setViewName("redirect:/login?signUpMessage=Could%20not%20create%20account.");
 		} else
 			model.setViewName("redirect:/login?signUpMessage=Sign%20up%20successful");
+		return model;
+	}
+
+	@RequestMapping(value = "/searchQues", method = RequestMethod.GET)
+	public ModelAndView signUp(@RequestParam(value = "searchText", required = true) String searchText) {
+		ModelAndView model = new ModelAndView();
+		List<Question> questions = quesDao.searchQuestions(searchText);
+		model.addObject("questions", questions);
+		if (questions == null || questions.isEmpty())
+			model.addObject("message", "No results found");
+		model.setViewName("search");
 		return model;
 	}
 

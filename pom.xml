@@ -80,7 +80,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>SpringSecurity</finalName>
+		<finalName>QnAForum</finalName>
 		<plugins>
 
 			<plugin>

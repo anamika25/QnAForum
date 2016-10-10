@@ -1,0 +1,6 @@
+http://stackoverflow.com/questions/tagged/java?sort=votes&pageSize=50
+http://stackoverflow.com/questions/tagged/python?sort=votes&pageSize=50
+http://stackoverflow.com/questions/tagged/mysql?sort=votes&pageSize=50
+http://stackoverflow.com/questions/tagged/android?sort=votes&pageSize=50
+http://stackoverflow.com/questions/tagged/php?sort=votes&pageSize=50
+http://stackoverflow.com/questions/tagged/database?sort=votes&pageSize=50

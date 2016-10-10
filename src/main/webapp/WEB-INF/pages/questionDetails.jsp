@@ -6,6 +6,7 @@
 
 <html>
 <head>
+<title>Question Details</title>
 <link href="<c:url value="/resources/css/jAlert.css" />"
 	rel="stylesheet">
 <script src="/resources/js/jquery-3.1.1.min.js"></script>
@@ -40,9 +41,13 @@
 	
 	function deleteAnswer(quesId,ansId) {
 		var url = "deleteAnswer?${_csrf.parameterName}=${_csrf.token}&quesId="+quesId+"&ansId="+ansId;
-		$.post(url, function(){
-			location.reload();
-		});
+		confirm(function(){
+			$.post(url, function(){
+				location.reload();
+			});
+		  }, function(){
+		    
+		  });
 	}
 </script>
 </head>
@@ -69,6 +74,10 @@
 	line-height: 11px;
 	border-radius: 2px;
 	margin-bottom: 5px;
+}
+
+.deleteButton {
+	background-color: red;
 }
 
 .addAnswerButton {
@@ -98,13 +107,15 @@ textarea {
 </style>
 <body>
 	<div style="margin-left: 50px; margin-right: 50px;">
-		<h2 style="margin-top: 40px; border-bottom: 1px solid #e4e6e8;">${question.title}</h2>
-		<p style="border-bottom: 1px solid #e4e6e8;">${question.text }</p>
+		<h2
+			style="margin-top: 40px; border-bottom: 1px solid #e4e6e8; padding-bottom: 10px;">${question.title}</h2>
+		<p style="border-bottom: 1px solid #e4e6e8; padding-bottom: 7px;">${question.text }</p>
 		<div class="tags">
 			<c:forEach items="${question.categories}" var="cat" varStatus="ctr">
 				<div>${cat.name }</div>
 			</c:forEach>
-			<h4 style="float: right; color:red;">Posted By: ${question.user.username}</h4>
+			<h4 style="float: right; color: red;">Posted By:
+				${question.user.username}</h4>
 		</div>
 
 		<div class="addAnswerButton"
@@ -118,9 +129,10 @@ textarea {
 					<div style="display: table-cell; min-width: 40px;">
 						<b>${ctr.count}</b>
 					</div>
-					<div id="ans-${ctr.count }" style="word-wrap: break-word;">${ans.text }</div>
+					<div id="ans-${ctr.count }"
+						style="word-wrap: break-word; max-width: 1235px;">${ans.text }</div>
 				</div>
-				<c:set var="ansText" scope="session" value="${ans.text}" />
+				<c:set var="ansId" scope="session" value="${ans.text}" />
 				<div
 					style="border-bottom: 1px solid #e4e6e8; margin-top: 20px; padding-bottom: 10px;">
 					<h4 style="padding-bottom: 10px; display: inline;">Answer by:
