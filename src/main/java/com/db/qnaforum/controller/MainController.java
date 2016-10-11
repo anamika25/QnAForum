@@ -223,4 +223,22 @@ public class MainController {
 		return model;
 	}
 
+	@RequestMapping(value = { "/myQuestions" }, method = RequestMethod.GET)
+	public ModelAndView myQuestions(Principal principal,
+			@RequestParam(value = "pageNum", required = false) Integer pageNum) {
+
+		ModelAndView model = new ModelAndView();
+		pageNum = pageNum == null ? 0 : pageNum;
+		User user = userDao.findByUsername(principal.getName());
+		List<Question> questions = quesDao.findQuestionsByUserIdPaginated(pageNum, user.getId());
+		model.addObject("questions", questions);
+		int noOfRecords = quesDao.getNoOfRecords();
+		int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / 20);
+		model.addObject("noOfPages", noOfPages);
+		model.addObject("currentPage", pageNum);
+		model.setViewName("myQuestions");
+		return model;
+
+	}
+
 }

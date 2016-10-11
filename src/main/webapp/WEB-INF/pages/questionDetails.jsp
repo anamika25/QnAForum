@@ -128,9 +128,11 @@ textarea {
 			<c:if
 				test="${pageContext.request.userPrincipal.name == question.user.username}">
 				<div class="deleteButton" style="float: right;"
-					onClick="deleteQuestion(${question.questionId});">Delete Question</div>
+					onClick="deleteQuestion(${question.questionId});">Delete
+					Question</div>
 			</c:if>
-			<h4 style="float: right; color: red; margin-top: 8px; margin-right: 5px;">Posted
+			<h4
+				style="float: right; color: black; margin-top: 8px; margin-right: 5px;">Posted
 				By: ${question.user.username}</h4>
 		</div>
 

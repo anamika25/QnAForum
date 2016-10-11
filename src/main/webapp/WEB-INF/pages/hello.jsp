@@ -21,10 +21,14 @@
 	function addQuestion() {
 		document.getElementById("addQuestion").submit();
 	}
+	
+	function myQuestions() {
+		document.getElementById("myQuestions").submit();
+	}
 </script>
 </head>
 <style>
-.navigationButton, #addQues {
+.navigationButton, #addQues, #myQues {
 	background-color: #0095ff;
 	padding: 10px;
 	color: #FFF;
@@ -35,6 +39,10 @@
 	margin-bottom: 5px;
 	margin-right: 5px;
 	text-decoration: none;
+}
+
+#myQues {
+	background-color: darkred;
 }
 
 .quesTitle {
@@ -66,11 +74,18 @@
 				<div class="error">${message}</div>
 			</div>
 		</c:if>
-		<form action="${questionUrl}" method="get" id="addQuestion"
-			style="text-align: center;">
-			<input type="button" name="button 1" id="addQues"
-				onclick="addQuestion()" value="Add Question" />
-		</form>
+		<div style="text-align: center;">
+			<form action="${questionUrl}" method="get" id="addQuestion"
+				style="margin-top: 5px; display: inline-block;">
+				<input type="button" name="button 1" id="addQues"
+					onclick="addQuestion()" value="Add Question" />
+			</form>
+			<form action="myQuestions" method="get" id="myQuestions"
+				style="display: inline-block; margin-top: 5px;">
+				<input type="button" name="button 1" id="myQues"
+					onclick="myQuestions()" value="My Questions" />
+			</form>
+		</div>
 
 		<ul id="questions">
 			<c:forEach items="${questions}" var="ques" varStatus="ctr">

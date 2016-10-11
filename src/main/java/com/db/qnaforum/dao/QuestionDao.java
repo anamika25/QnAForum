@@ -102,6 +102,42 @@ public class QuestionDao {
 		}
 	}
 
+	public List<Question> findQuestionsByUserIdPaginated(int pageId, int userId) {
+		String sql = "SELECT SQL_CALC_FOUND_ROWS * FROM Questions WHERE user_id = ? ORDER BY question_id DESC LIMIT ? OFFSET ?";
+		Connection conn = null;
+		try {
+			conn = dataSource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, userId);
+			ps.setInt(2, 20);
+			ps.setInt(3, pageId * 20);
+			List<Question> questions = new ArrayList<Question>();
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Question ques = new Question(rs.getInt("question_id"), rs.getString("title"), rs.getString("text"),
+						rs.getInt("user_id"));
+				ques.setUser(userDao.findByUserId(ques.getUserId()));
+				questions.add(ques);
+			}
+			rs.close();
+
+			rs = ps.executeQuery("SELECT FOUND_ROWS()");
+			if (rs.next())
+				this.noOfRecords = rs.getInt(1);
+			ps.close();
+			return questions;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
 	public int addQuestion(String title, String text, int userid, List<Integer> categoryIds) {
 		String sql = "INSERT INTO Questions (title,text,user_id) VALUES (?,?,?)";
 		String sql1 = "INSERT INTO Question_Category_mapping (question_id,category_id) VALUES (?,?)";
