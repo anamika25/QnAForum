@@ -57,7 +57,7 @@
 			<h1>${message}</h1>
 		</c:if>
 		<c:if test="${empty message}">
-			<h1>Top 30 Search Results:</h1>
+			<h1>Top Search Results:</h1>
 
 			<ul id="questions">
 				<c:forEach items="${questions}" var="ques" varStatus="ctr">
